@@ -104,11 +104,6 @@ class Nanoleaf(object):
         data = {"brightness": {"value": value, "duration": duration}}
         self._request("state", 'PUT', data)
 
-    def brightness_increment(self, increment: int):
-        "Lowers or raises the brightness by the specified increment"
-        data = {"brightness": {"increment": increment}}
-        self._request("state", 'PUT', data)
-
     @property
     def hue(self):
         response = self._request("state/hue", 'GET').json()
@@ -127,11 +122,6 @@ class Nanoleaf(object):
     @hue.setter
     def hue(self, value: int):
         data = {"hue": {"value": value}}
-        self._request("state", 'PUT', data)
-
-    def hue_increment(self, increment: int):
-        "Lowers or raises the brightness by the specified increment"
-        data = {"hue": {"increment": increment}}
         self._request("state", 'PUT', data)
 
     @property
@@ -154,11 +144,6 @@ class Nanoleaf(object):
         data = {"sat": {"value": value}}
         self._request("state", 'PUT', data)
 
-    def saturation_increment(self, increment: int):
-        "Lowers or raises the brightness by the specified increment"
-        data = {"sat": {"increment": increment}}
-        self._request("state", 'PUT', data)
-
     @property
     def color_temperature(self):
         response = self._request("state/ct", 'GET').json()
@@ -177,11 +162,6 @@ class Nanoleaf(object):
     @color_temperature.setter
     def color_temperature(self, value: int):
         data = {"ct": {"value": value}}
-        self._request("state", 'PUT', data)
-
-    def color_temperature_increment(self, increment: int):
-        "Lowers or raises the brightness by the specified increment"
-        data = {"ct": {"increment": increment}}
         self._request("state", 'PUT', data)
 
     @property
