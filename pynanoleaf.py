@@ -109,6 +109,86 @@ class Nanoleaf(object):
         data = {"brightness": {"increment": increment}}
         self._request("state", 'PUT', data)
 
+    @property
+    def hue(self):
+        response = self._request("state/hue", 'GET').json()
+        return response['value']
+
+    @property
+    def max_hue(self):
+        response = self._request("state/hue", 'GET').json()
+        return response['max']
+
+    @property
+    def min_hue(self):
+        response = self._request("state/hue", 'GET').json()
+        return response['min']
+
+    @hue.setter
+    def hue(self, value: int):
+        data = {"hue": {"value": value}}
+        self._request("state", 'PUT', data)
+
+    def hue_increment(self, increment: int):
+        "Lowers or raises the brightness by the specified increment"
+        data = {"hue": {"increment": increment}}
+        self._request("state", 'PUT', data)
+
+    @property
+    def saturation(self):
+        response = self._request("state/sat", 'GET').json()
+        return response['value']
+
+    @property
+    def max_saturation(self):
+        response = self._request("state/sat", 'GET').json()
+        return response['max']
+
+    @property
+    def min_saturation(self):
+        response = self._request("state/sat", 'GET').json()
+        return response['min']
+
+    @saturation.setter
+    def saturation(self, value: int):
+        data = {"sat": {"value": value}}
+        self._request("state", 'PUT', data)
+
+    def saturation_increment(self, increment: int):
+        "Lowers or raises the brightness by the specified increment"
+        data = {"sat": {"increment": increment}}
+        self._request("state", 'PUT', data)
+
+    @property
+    def color_temperature(self):
+        response = self._request("state/ct", 'GET').json()
+        return response['value']
+
+    @property
+    def max_color_temperature(self):
+        response = self._request("state/ct", 'GET').json()
+        return response['max']
+
+    @property
+    def min_color_temperature(self):
+        response = self._request("state/ct", 'GET').json()
+        return response['min']
+
+    @color_temperature.setter
+    def color_temperature(self, value: int):
+        data = {"ct": {"value": value}}
+        self._request("state", 'PUT', data)
+
+    def color_temperature_increment(self, increment: int):
+        "Lowers or raises the brightness by the specified increment"
+        data = {"ct": {"increment": increment}}
+        self._request("state", 'PUT', data)
+
+    @property
+    def color_mode(self):
+        response = self._request("state/colorMode", 'GET').json()
+        return response['value']
+
     def _request(self, path, method=None, data=None, authenticated=True):
         if authenticated:
             url = self.authenticatedUrl + path
