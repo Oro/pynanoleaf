@@ -20,14 +20,15 @@ class Nanoleaf(object):
 
     @property
     def authenticatedUrl(self):
-        return '{}{}'.format(self.baseUrl, self.token)
+        return '{}{}/'.format(self.baseUrl, self.token)
 
+    @property
     def info(self):
         return self._request("/", 'GET').json()
 
     def add_user(self):
-        json = self._request("new", 'POST', authenticated=False).json()
-        return json['auth_token']
+        response = self._request("new", 'POST', authenticated=False).json()
+        return response['auth_token']
 
     def authenticate(self):
         token = self.add_user()
@@ -36,16 +37,36 @@ class Nanoleaf(object):
     def delete_user(self):
         return self._request("/", 'DELETE')
 
+    @property
+    def on(self):
+        response = self._request("state/on", 'GET').json()
+        return response['value']
+
+    @on.setter
+    def on(self, value: bool):
+        data = {"on": {"value": value}}
+        self._request("state", 'PUT', data)
+
+    @property
+    def off(self):
+        response = self._request("state/on", 'GET').json()
+        return not response['value']
+
+    @off.setter
+    def off(self, value: bool):
+        data = {"on": {"value": not value}}
+        self._request("state", 'PUT', data)
+
+
     def _request(self, path, method=None, data=None, authenticated=True):
         if authenticated:
             url = self.authenticatedUrl + path
         else:
             url = self.baseUrl + path
         try:
-            req = requests.Request(method, url, data=data)
+            req = requests.Request(method, url, json=data)
             response = self._session.send(req.prepare())
             response.raise_for_status()
-            logger.info("STATUS CODE {}".format(response.status_code))
             if response.status_code == 200:
                 logger.info(response.json())
             return (response)
@@ -64,7 +85,7 @@ class Nanoleaf(object):
                     on your device for 5 seconds until the LED starts flashing
                     in a pattern.""") from e
             elif e.response.status_code == 404:
-                raise Unavailable("{} is not existing".format(url)) from e
+                raise Unavailable("{} returns 404".format(url)) from e
             else:
                 raise NanoleafError("Unknown Error occured") from e
 
