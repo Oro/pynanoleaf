@@ -33,156 +33,148 @@ class Nanoleaf(object):
 
     @property
     def info(self):
-        return self._request("/", 'GET').json()
+        return self._get("/")
 
     @property
     def firmwareVersion(self):
-        return (self._request("/", 'GET').json())['firmwareVersion']
+        return self._get("/")["firmwareVersion"]
 
     @property
     def model(self):
-        return (self._request("/", 'GET').json())['model']
+        return self._get("/")['model']
 
     @property
     def name(self):
-        return (self._request("/", 'GET').json())['name']
+        return self._get("/")['name']
 
-    def add_user(self):
+    def request_token(self):
+        """Returns a new token from the Nanoleaf device.
+        If you want this token to be used in new requests use
+        the authenticate() method instead.
+        This only works when the on/off button on the device
+        is helt for 5-7 seconds and the LED starts flashing.
+
+        Will raise a NotAuthorizingNewTokens Exception otherwise"""
         response = self._request("new", 'POST', authenticated=False).json()
         return response['auth_token']
 
-    def authenticate(self):
-        token = self.add_user()
-        self.token = token
+    def authorize(self):
+        """Requests a new token from the Nanoleaf device
+        and sets it as the currently used one. If you just want to request a
+        new token use the request_token method instead.
+        This only works when the on/off button on the device
+        is helt for 5-7 seconds and the LED starts flashing.
 
-    def delete_user(self):
+        Will raise a NotAuthorizingNewTokens Exception otherwise"""
+        self.token = self.request_token()
+
+    def delete_token(self):
+        """Deletes the currently used token. This is not reversible.
+        You will have to request a new token if you want to use the
+        Nanoleaf integration with that device."""
         return self._request("/", 'DELETE')
 
     @property
     def on(self):
-        response = self._request("state/on", 'GET').json()
-        return response['value']
+        return self._get("state/on")['value']
 
     @on.setter
     def on(self, value: bool):
-        data = {"on": {"value": value}}
-        self._request("state", 'PUT', data)
+        self._put("state", {"on": {"value": value}})
 
     @property
     def off(self):
-        response = self._request("state/on", 'GET').json()
-        return not response['value']
+        return self._get("state/on")['value']
 
     @off.setter
     def off(self, value: bool):
-        data = {"on": {"value": not value}}
-        self._request("state", 'PUT', data)
+        self._put("state", {"on": {"value": not value}})
 
     @property
     def brightness(self):
-        response = self._request("state/brightness", 'GET').json()
-        return response['value']
+        return self._get("state/brightness")['value']
 
     @property
     def max_brightness(self):
-        response = self._request("state/brightness", 'GET').json()
-        return response['max']
+        return self._get("state/brightness")['max']
 
     @property
     def min_brightness(self):
-        response = self._request("state/brightness", 'GET').json()
-        return response['min']
+        return self._get("state/brightness")['min']
 
     @brightness.setter
     def brightness(self, value: int):
-        data = {"brightness": {"value": value}}
-        self._request("state", 'PUT', data)
+        self._put("state/brightness", {"brightness": {"value": value}})
 
     def brightness_transition(self, value: int, duration: int):
         """Sets the brightness to the specified value
         with a transition lastind duration seconds"""
-        data = {"brightness": {"value": value, "duration": duration}}
-        self._request("state", 'PUT', data)
+        self._put("state/brightness",
+                  {"brightness": {"value": value, "duration": duration}})
 
     @property
     def hue(self):
-        response = self._request("state/hue", 'GET').json()
-        return response['value']
+        return self._get("state/hue")['value']
 
     @property
     def max_hue(self):
-        response = self._request("state/hue", 'GET').json()
-        return response['max']
+        return self._get("state/hue")['max']
 
     @property
     def min_hue(self):
-        response = self._request("state/hue", 'GET').json()
-        return response['min']
+        return self._get("state/hue")['min']
 
     @hue.setter
     def hue(self, value: int):
-        data = {"hue": {"value": value}}
-        self._request("state", 'PUT', data)
+        self._put("state/hue", {"value": value})
 
     @property
     def saturation(self):
-        response = self._request("state/sat", 'GET').json()
-        return response['value']
+        return self._get("state/sat")['value']
 
     @property
     def max_saturation(self):
-        response = self._request("state/sat", 'GET').json()
-        return response['max']
+        return self._get("state/sat")['max']
 
     @property
     def min_saturation(self):
-        response = self._request("state/sat", 'GET').json()
-        return response['min']
+        return self._get("state/sat")['min']
 
     @saturation.setter
     def saturation(self, value: int):
-        data = {"sat": {"value": value}}
-        self._request("state", 'PUT', data)
+        self._put("state/sat", {"sat": {"value": value}})
 
     @property
     def color_temperature(self):
-        response = self._request("state/ct", 'GET').json()
-        return response['value']
+        return self._get("state/ct")['value']
 
     @property
     def max_color_temperature(self):
-        response = self._request("state/ct", 'GET').json()
-        return response['max']
+        return self._get("state/ct")['max']
 
     @property
     def min_color_temperature(self):
-        response = self._request("state/ct", 'GET').json()
-        return response['min']
+        return self._get("state/ct")['min']
 
     @color_temperature.setter
     def color_temperature(self, value: int):
-        data = {"ct": {"value": value}}
-        self._request("state", 'PUT', data)
+        self._put("state/ct", {"value": value})
 
     @property
     def color_mode(self):
-        response = self._request("state/colorMode", 'GET').json()
-        return response['value']
+        return self._get("state/colorMode")['value']
 
     @property
     def effect(self):
-        response = self._request("effects/select", 'GET').json()
-        return response
+        return self._get("effects/select")
 
     @effect.setter
     def effect(self, value):
-        data = {"select": value}
-        self._request("effects", 'PUT', data)
+        self._put("effects", {"select": value})
 
     @property
     def effects(self):
-        response = self._request("effects/effectsList", 'GET').json()
-        return response
+        return self._get("effects/effectsList")
 
     def _request(self, path, method=None, data=None, authenticated=True):
         if authenticated:
@@ -214,6 +206,15 @@ class Nanoleaf(object):
                 raise Unavailable("{} returns 404".format(url)) from e
             else:
                 raise NanoleafError("Unknown Error occured") from e
+
+    def _get(self, path, key=None):
+        "Helper method to GET a URL"
+        response = self._request(path, 'GET').json()
+        return response
+
+    def _put(self, path, data):
+        "Helper method to PUT data at an URL"
+        self._request(path, 'PUT', data)
 
 
 class NanoleafError(Exception):
