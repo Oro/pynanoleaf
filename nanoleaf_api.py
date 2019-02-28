@@ -6,21 +6,35 @@ logger = logging.getLogger(__name__)
 
 class Nanoleaf(object):
     """Nanoleaf API wrapper"""
-    def __init__(self, host, token, port=16021, protocol='http'):
+    def __init__(self, host, token=None, port=16021, protocol='http'):
         self.host = host
         self.token = token
         self.port = port
         self.protocol = protocol
         self._session = requests.Session()
-        self.baseUrl = '{}://{}:{}/api/v1/'.format(
+
+    @property
+    def baseUrl(self):
+        return '{}://{}:{}/api/v1/'.format(
             self.protocol, self.host, self.port)
-        self.authenticatedUrl = '{}{}'.format(self.baseUrl, self.token)
+
+    @property
+    def authenticatedUrl(self):
+        return '{}{}'.format(self.baseUrl, self.token)
 
     def info(self):
         return self._request("/", 'GET').json()
 
     def add_user(self):
-        return self._request("new", 'POST', authenticated=False).json()
+        json = self._request("new", 'POST', authenticated=False).json()
+        return json['auth_token']
+
+    def authenticate(self):
+        token = self.add_user()
+        self.token = token
+
+    def delete_user(self):
+        return self._request("/", 'DELETE')
 
     def _request(self, path, method=None, data=None, authenticated=True):
         if authenticated:
@@ -32,7 +46,8 @@ class Nanoleaf(object):
             response = self._session.send(req.prepare())
             response.raise_for_status()
             logger.info("STATUS CODE {}".format(response.status_code))
-            logger.info(response.json())
+            if response.status_code == 200:
+                logger.info(response.json())
             return (response)
         except(requests.ConnectionError, requests.Timeout) as e:
             raise Unavailable("{} is not available".format(self.host)) from e
