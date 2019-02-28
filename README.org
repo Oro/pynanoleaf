@@ -1,0 +1,2 @@
+* Nanoleaf API Wrapper
+  A Python3 wrapper for the Nanoleaf API, controlling both Nanoleaf Aurora as well as Nanoleaf Canvas.
