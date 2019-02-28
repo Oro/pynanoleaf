@@ -57,6 +57,36 @@ class Nanoleaf(object):
         data = {"on": {"value": not value}}
         self._request("state", 'PUT', data)
 
+    @property
+    def brightness(self):
+        response = self._request("state/brightness", 'GET').json()
+        return response['value']
+
+    @property
+    def max_brightness(self):
+        response = self._request("state/brightness", 'GET').json()
+        return response['max']
+
+    @property
+    def min_brightness(self):
+        response = self._request("state/brightness", 'GET').json()
+        return response['min']
+
+    @brightness.setter
+    def brightness(self, value: int):
+        data = {"brightness": {"value": value}}
+        self._request("state", 'PUT', data)
+
+    def brightness_transition(self, value: int, duration: int):
+        """Sets the brightness to the specified value
+        with a transition lastind duration seconds"""
+        data = {"brightness": {"value": value, "duration": duration}}
+        self._request("state", 'PUT', data)
+
+    def brightness_increment(self, increment: int):
+        "Lowers or raises the brightness by the specified increment"
+        data = {"brightness": {"increment": increment}}
+        self._request("state", 'PUT', data)
 
     def _request(self, path, method=None, data=None, authenticated=True):
         if authenticated:
