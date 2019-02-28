@@ -35,6 +35,18 @@ class Nanoleaf(object):
     def info(self):
         return self._request("/", 'GET').json()
 
+    @property
+    def firmwareVersion(self):
+        return (self._request("/", 'GET').json())['firmwareVersion']
+
+    @property
+    def model(self):
+        return (self._request("/", 'GET').json())['model']
+
+    @property
+    def name(self):
+        return (self._request("/", 'GET').json())['name']
+
     def add_user(self):
         response = self._request("new", 'POST', authenticated=False).json()
         return response['auth_token']
