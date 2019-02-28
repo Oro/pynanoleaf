@@ -169,6 +169,21 @@ class Nanoleaf(object):
         response = self._request("state/colorMode", 'GET').json()
         return response['value']
 
+    @property
+    def effect(self):
+        response = self._request("effects/select", 'GET').json()
+        return response
+
+    @effect.setter
+    def effect(self, value):
+        data = {"select": value}
+        self._request("effects", 'PUT', data)
+
+    @property
+    def effects(self):
+        response = self._request("effects/effectsList", 'GET').json()
+        return response
+
     def _request(self, path, method=None, data=None, authenticated=True):
         if authenticated:
             url = self.authenticatedUrl + path
