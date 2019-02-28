@@ -23,6 +23,15 @@ class Nanoleaf(object):
         return '{}{}/'.format(self.baseUrl, self.token)
 
     @property
+    def available(self):
+        "Returns True if the Nanoleaf device is available"
+        try:
+            self.info
+        except Exception:
+            return False
+        return True
+
+    @property
     def info(self):
         return self._request("/", 'GET').json()
 
