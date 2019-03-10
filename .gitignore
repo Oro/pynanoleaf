@@ -7,3 +7,6 @@ pipfile.lock
 .python-version
 .DS_Store
 venv
+dist/
+*.egg-info/
+MANIFEST
