@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(
-    name='PyNanoleaf',
+    name='pynanoleaf',
     version='0.0.1',
     author='Marco Orovecchia',
     author_email='pynanoleaf@marco.orovecchia.com',
