@@ -104,7 +104,7 @@ class Nanoleaf(object):
 
     @brightness.setter
     def brightness(self, value: int):
-        self._put("state/brightness", {"brightness": {"value": value}})
+        self._put("state", {"brightness": {"value": value}})
 
     def brightness_transition(self, value: int, duration: int):
         """Sets the brightness to the specified value
@@ -126,7 +126,7 @@ class Nanoleaf(object):
 
     @hue.setter
     def hue(self, value: int):
-        self._put("state/hue", {"value": value})
+        self._put("state", {"hue": {"value": value}})
 
     @property
     def saturation(self):
@@ -142,7 +142,7 @@ class Nanoleaf(object):
 
     @saturation.setter
     def saturation(self, value: int):
-        self._put("state/sat", {"sat": {"value": value}})
+        self._put("state", {"sat": {"value": value}})
 
     @property
     def color_temperature(self):
@@ -158,7 +158,7 @@ class Nanoleaf(object):
 
     @color_temperature.setter
     def color_temperature(self, value: int):
-        self._put("state/ct", {"value": value})
+        self._put("state", {"ct": {"value": value}})
 
     @property
     def color_mode(self):
@@ -186,7 +186,7 @@ class Nanoleaf(object):
             response = self._session.send(req.prepare())
             response.raise_for_status()
             if response.status_code == 200:
-                logger.info(response.json())
+                logger.debug(response.json())
             return (response)
         except(requests.ConnectionError, requests.Timeout) as e:
             raise Unavailable("{} is not available".format(self.host)) from e
