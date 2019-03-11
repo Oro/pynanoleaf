@@ -6,12 +6,14 @@ logger = logging.getLogger(__name__)
 
 class Nanoleaf(object):
     """Nanoleaf API wrapper"""
-    def __init__(self, host, token=None, port=16021, protocol='http'):
+    def __init__(self, host, token=None, port=16021, protocol='http',
+                 timeout=2):
         self.host = host
         self.token = token
         self.port = port
         self.protocol = protocol
         self._session = requests.Session()
+        self.timeout = timeout
 
     @property
     def baseUrl(self):
@@ -183,7 +185,7 @@ class Nanoleaf(object):
             url = self.baseUrl + path
         try:
             req = requests.Request(method, url, json=data)
-            response = self._session.send(req.prepare())
+            response = self._session.send(req.prepare(), timeout=self.timeout)
             response.raise_for_status()
             if response.status_code == 200:
                 logger.debug(response.json())
