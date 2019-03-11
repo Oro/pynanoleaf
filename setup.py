@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='pynanoleaf',
-    version='0.0.2',
+    version='0.0.4',
     author='Marco Orovecchia',
     author_email='pynanoleaf@marco.orovecchia.com',
     url='https://github.com/Oro/pynanoleaf',
