@@ -1,1 +1,1 @@
-from .pynanoleaf import Nanoleaf
+from .pynanoleaf import *
