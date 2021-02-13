@@ -4,8 +4,74 @@ import requests
 logger = logging.getLogger(__name__)
 
 
+def _deepgetter(key):
+    """Retrieve value from nested dicts"""
+    def get(data):
+        for k in key:
+            data = data[k]
+        return data
+    return get
+
+
+def _deepsetter(key):
+    """Set value in nested dicts"""
+    def set(data, value):
+        # Fill structure with empty dictionaries up to but not including the
+        # final key part.
+        for k in key[:-1]:
+            data = data.setdefault(k, {})
+        data[key[-1]] = value
+    return set
+
+
+def _dictitem_property(keystr):
+    """Property backed by nested dict items"""
+    key = keystr.split('.')
+    return property(
+        fget=_deepgetter(key),
+        fset=_deepsetter(key)
+    )
+
+
+class _Info(dict):
+    """General info about the Nanoleaf"""
+
+    serialNo = _dictitem_property('serialNo')
+    firmwareVersion = _dictitem_property('firmwareVersion')
+    model = _dictitem_property('model')
+    name = _dictitem_property('name')
+
+
+class _State(dict):
+    """State of the Nanoleaf"""
+
+    on = _dictitem_property('on.value')
+    brightness = _dictitem_property('brightness.value')
+    min_brightness = _dictitem_property('brightness.min')
+    max_brightness = _dictitem_property('brightness.max')
+    hue = _dictitem_property('hue.value')
+    min_hue = _dictitem_property('hue.min')
+    max_hue = _dictitem_property('hue.max')
+    saturation = _dictitem_property('sat.value')
+    min_saturation = _dictitem_property('sat.min')
+    max_saturation = _dictitem_property('sat.max')
+    color_temperature = _dictitem_property('ct.value')
+    min_color_temperature = _dictitem_property('ct.min')
+    max_color_temperature = _dictitem_property('ct.max')
+    color_mode = _dictitem_property('colorMode')
+
+    def __init__(self, data=None, **kwargs):
+        super().__init__(data or {})
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+
 class Nanoleaf(object):
     """Nanoleaf API wrapper"""
+
+    Info = _Info
+    State = _State
+
     def __init__(self, host, token=None, port=16021, protocol='http',
                  timeout=2):
         self.host = host
@@ -34,8 +100,19 @@ class Nanoleaf(object):
         return True
 
     @property
-    def info(self):
-        return self._get("/")
+    def info(self) -> Info:
+        return self.Info(self._get("/"))
+
+    @property
+    def state(self) -> State:
+        return self.State(self._get("state"))
+
+    @state.setter
+    def state(self, state: State) -> None:
+        self._put("state", state)
+
+    def update(self, **kwargs) -> None:
+        self._put("state", self.State(**kwargs))
 
     @property
     def serialNo(self):
