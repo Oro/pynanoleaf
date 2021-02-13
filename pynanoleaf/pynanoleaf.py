@@ -38,6 +38,10 @@ class Nanoleaf(object):
         return self._get("/")
 
     @property
+    def serialNo(self):
+        return self._get("/")['serialNo']
+
+    @property
     def firmwareVersion(self):
         return self._get("/")["firmwareVersion"]
 
