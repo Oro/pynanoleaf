@@ -249,7 +249,8 @@ class Nanoleaf(object):
 
     @property
     def effect(self):
-        return self._get("effects/select")
+        effect = self._get("effects/select")
+        return effect if effect != '*Solid*' else None
 
     @effect.setter
     def effect(self, value):
