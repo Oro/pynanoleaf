@@ -35,7 +35,8 @@ def _dictitem_property(keystr):
     )
 
 def _parseEffect(effect):
-    """These effect names have special meaning and are not directly setable and should not be returned as effect name for Consumers."""
+    """These effect names have special meaning and are not directly setable
+    and should not be returned as effect name for Consumers."""
     RESERVED_EFFECT_NAMES = ["*Solid*", "*Static*", "*Dynamic*"]
     try:
         RESERVED_EFFECT_NAMES.index(effect)
