@@ -9,6 +9,8 @@ def _deepgetter(key):
     def get(data):
         for k in key:
             data = data[k]
+        if ('.'.join(key) == 'effects.select'):
+            return _parseEffect(data)
         return data
     return get
 
@@ -32,6 +34,15 @@ def _dictitem_property(keystr):
         fset=_deepsetter(key)
     )
 
+def _parseEffect(effect):
+    """These effect names have special meaning and are not directly setable and should not be returned as effect name for Consumers."""
+    RESERVED_EFFECT_NAMES = ["*Solid*", "*Static*", "*Dynamic*"]
+    try:
+        RESERVED_EFFECT_NAMES.index(effect)
+        return None
+    except ValueError:
+        return effect
+
 
 class _Info(dict):
     """General info about the Nanoleaf"""
@@ -40,6 +51,10 @@ class _Info(dict):
     firmwareVersion = _dictitem_property('firmwareVersion')
     model = _dictitem_property('model')
     name = _dictitem_property('name')
+    manufacturer = _dictitem_property('manufacturer')
+    hardwareVersion = _dictitem_property('hardwareVersion')
+    effects = _dictitem_property('effects.effectsList')
+    effectSelect = _dictitem_property('effects.select')
 
 
 class _State(dict):
@@ -249,8 +264,7 @@ class Nanoleaf(object):
 
     @property
     def effect(self):
-        effect = self._get("effects/select")
-        return effect if effect != '*Solid*' else None
+        return _parseEffect(self._get("effects/select"))
 
     @effect.setter
     def effect(self, value):
