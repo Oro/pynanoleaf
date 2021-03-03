@@ -36,10 +36,9 @@ def _dictitem_property(keystr):
     )
 
 def _parseEffect(effect):
-    try:
-        RESERVED_EFFECT_NAMES.index(effect)
+    if effect in RESERVED_EFFECT_NAMES:
         return None
-    except ValueError:
+    else:
         return effect
 
 
