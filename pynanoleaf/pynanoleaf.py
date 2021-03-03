@@ -3,6 +3,9 @@ import requests
 
 logger = logging.getLogger(__name__)
 
+"""These effect names have special meaning and are not directly setable and should not be returned as effect name for Consumers."""
+RESERVED_EFFECT_NAMES = ["*Solid*", "*Static*", "*Dynamic*"]
+
 
 def _deepgetter(key):
     """Retrieve value from nested dicts"""
@@ -31,6 +34,12 @@ def _dictitem_property(keystr):
         fget=_deepgetter(key),
         fset=_deepsetter(key)
     )
+
+def _parseEffect(effect):
+    if effect in RESERVED_EFFECT_NAMES:
+        return None
+    else:
+        return effect
 
 
 class _Info(dict):
@@ -249,7 +258,7 @@ class Nanoleaf(object):
 
     @property
     def effect(self):
-        return self._get("effects/select")
+        return _parseEffect(self._get("effects/select"))
 
     @effect.setter
     def effect(self, value):
