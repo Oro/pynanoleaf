@@ -254,7 +254,7 @@ class Nanoleaf(object):
 
     @property
     def color_mode(self):
-        return self._get("state/colorMode")['value']
+        return self._get("state/colorMode")
 
     @property
     def effect(self):
